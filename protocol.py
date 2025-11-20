@@ -1,59 +1,67 @@
 """
 Protocol module for client-server communication
+פורמט: LENGTH#MESSAGE
 """
 
 import socket
 
-MAX_MSG_LENGTH_SIZE = 1024
-
 def send(sock, msg):
     """
-    שולח הודעה - תומך גם ב-string וגם ב-bytes
+    שולח הודעה בפורמט: LENGTH#MESSAGE
+    דוגמה: "7#dir C:\\"
     """
-    # אם זה string, ממיר רווחים ל-#
+    # אם זה string, ממיר רווחים ל-@ (כי # תפוס!)
     if isinstance(msg, str):
-        msg = msg.replace(" ", "#").encode()
+        msg = msg.replace(" ", "@").encode()
     elif isinstance(msg, bytes):
-        # אם זה bytes (כמו תמונה), שולח ישירות
         pass
     else:
         raise TypeError("msg must be str or bytes")
 
-    if len(msg) > 10**MAX_MSG_LENGTH_SIZE - 1:
-        raise Exception("Message too big")
+    # יצירת ההודעה: "LENGTH#MESSAGE"
+    length = len(msg)
+    full_msg = f"{length}#".encode() + msg
 
-    # שליחת האורך
-    msg_length = str(len(msg)).zfill(MAX_MSG_LENGTH_SIZE)
-    sock.sendall(msg_length.encode())
-
-    # שליחת ההודעה
-    sock.sendall(msg)
+    sock.sendall(full_msg)
 
 def recv(sock):
     """
-    מקבל הודעה
+    מקבל הודעה בפורמט: LENGTH#MESSAGE
+    קורא בייט בייט עד # כדי לדעת את האורך
     """
-    # קבלת האורך
-    msg_length_str = recv_all(sock, MAX_MSG_LENGTH_SIZE)
-    if not msg_length_str:
+    # שלב 1: קריאת האורך (עד #)
+    length_str = b''
+    while True:
+        byte = sock.recv(1)  # קורא בייט אחד
+        if not byte:
+            return None  # החיבור נסגר
+
+        if byte == b'#':
+            break  # מצאנו את ה-#, סיימנו לקרוא את האורך
+
+        length_str += byte
+
+    # המרת האורך למספר
+    try:
+        length = int(length_str.decode())
+    except ValueError:
         return None
 
-    msg_length = int(msg_length_str.decode())
-
-    # קבלת ההודעה
-    msg = recv_all(sock, msg_length)
+    # שלב 2: קריאת ההודעה עצמה
+    msg = recv_all(sock, length)
     if not msg:
         return None
 
-    # אם זה טקסט - מפצל לפי #
+    # ניסיון לפענח כטקסט
     try:
-        return msg.decode().split("#")
+        decoded = msg.decode()
+        return decoded.split("@")  # מפצל לפי @ (שהיה רווח)
     except UnicodeDecodeError:
-        # אם זה bytes (תמונה) - מחזיר ישירות
+        # אם זה bytes (תמונה)
         return [msg]
 
 def recv_all(sock, n):
-    """מקבל בדיוק n בתים - פונקציה פנימית"""
+    """מקבל בדיוק n בתים"""
     data = b''
     while len(data) < n:
         packet = sock.recv(n - len(data))
