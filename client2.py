@@ -190,4 +190,10 @@ def main():
 
 
 if __name__ == "__main__":
+    assert validate_command("DIR c:/")[0] is True, "Assertation FAILED"
+    assert validate_command("DELETE file.txt")[0] is True, "Assertation FAILED"
+    assert validate_command("COPY a b")[0] is True, "Assertation FAILED"
+    assert validate_command("EXECUTE notepad")[0] is True, "Assertation FAILED"
+    assert validate_command("EXIT")[0] is True, "Assertation FAILED"
+    logging.info("All assert tests passed")
     main()
