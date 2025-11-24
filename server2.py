@@ -274,4 +274,21 @@ def main():
 
 
 if __name__ == "__main__":
+    #Demi-files for asserts
+    #---------------------
+    with open("test_src.txt", "w") as f:
+         f.write("hello")
+    with open("test_src2.txt", "w") as f:
+        f.write("data")
+    #---------------------
+
+    success, files = look_for_dir(".")
+    assert success is True
+
+    assert copy("test_src2.txt", "test_dst2.txt") is True
+
+    assert delete("test_dst2.txt") is True, "Assertation FAILED"
+    assert delete("test_src2.txt") is True, "Assertation FAILED"
+    assert delete("test_src.txt") is True, "Assertation FAILED"
+    logging.info("All assert tests passed")
     main()
