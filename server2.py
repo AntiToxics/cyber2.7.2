@@ -202,7 +202,7 @@ def handle_client(client, addr):
                 success = execute(args[0])
                 protocol.send(client, str(success))
 
-            elif cmd == "SCREENSHOT_TAKE":
+            elif cmd == "TAKE_SCREENSHOT":
                 success = take_screenshot()
                 protocol.send(client, str(success))
 
@@ -274,7 +274,9 @@ def main():
 
 
 if __name__ == "__main__":
-    #Demi-files for asserts
+    
+    
+    # Demi-files for asserts
     #---------------------
     with open("test_src.txt", "w") as f:
          f.write("hello")
@@ -282,13 +284,30 @@ if __name__ == "__main__":
         f.write("data")
     #---------------------
 
+
+    # Dir assertation
+    # ---------------------
     success, files = look_for_dir(".")
-    assert success is True
+    assert success is True, "Assertation FAILED"
+    # ---------------------
 
-    assert copy("test_src2.txt", "test_dst2.txt") is True
+    # Copy assertation
+    # ---------------------
+    assert copy("test_src2.txt", "test_dst2.txt") is True, "Assertation FAILED"
+    # ---------------------
 
+
+    # Delete assertation
+    #-------------------
     assert delete("test_dst2.txt") is True, "Assertation FAILED"
     assert delete("test_src2.txt") is True, "Assertation FAILED"
     assert delete("test_src.txt") is True, "Assertation FAILED"
+    # -------------------
+
+    #Take_screenshot assertation
+    # -------------------
+    assert take_screenshot() is True, "Assertation FAILED"
+    # -------------------
+
     logging.info("All assert tests passed")
     main()
