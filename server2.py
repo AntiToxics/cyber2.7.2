@@ -209,7 +209,7 @@ def handle_client(client, addr):
                 success = take_screenshot()
                 protocol.send(client, str(success))
 
-            elif cmd == "PHOTO_SEND":
+            elif cmd == "SEND_PHOTO":
                 success, data = send_screenshot()
                 protocol.send(client, str(success))
                 if success and data:
@@ -277,8 +277,8 @@ def main():
 
 
 if __name__ == "__main__":
-    
-    
+
+
     # Demi-files for asserts
     #---------------------
     with open("test_src.txt", "w") as f:
