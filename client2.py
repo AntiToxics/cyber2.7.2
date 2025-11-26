@@ -1,5 +1,5 @@
 """
-TCP Client - Remote Control
+Client.py - Remote Control
 Author: Gilad Elran
 Date: 11/11/2025
 
