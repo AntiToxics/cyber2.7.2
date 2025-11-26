@@ -92,7 +92,9 @@ def validate_command(cmd_input):
 def main():
     """
     לולאת הלקוח הראשית
+    ממשיך לתקשר עם הלקוח עד לקבלת הפקודה EXIT
     """
+    
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # חיבור לשרת
