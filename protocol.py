@@ -1,14 +1,13 @@
 """
 Protocol module for client-server communication
-פורמט: LENGTH#MESSAGE
+פורמט: LENGTH#CMD@ARGS
 """
 
 import socket
 
 def send(sock, msg):
     """
-    שולח הודעה בפורמט: LENGTH#MESSAGE
-    דוגמה: "7#dir C:\\"
+    שולח הודעה בפורמט: LENGTH#CMD@ARGS
     """
     # אם זה string, ממיר רווחים ל-@ (כי # תפוס!)
     if isinstance(msg, str):
@@ -26,8 +25,9 @@ def send(sock, msg):
 
 def recv(sock):
     """
-    מקבל הודעה בפורמט: LENGTH#MESSAGE
+    מקבל הודעה בפורמט: LENGTH#CMD@ARGS
     קורא בייט בייט עד # כדי לדעת את האורך
+    מחזירה את ההודעה כ list כצורתו המקורית
     """
     # שלב 1: קריאת האורך (עד #)
     length_str = b''
@@ -61,7 +61,12 @@ def recv(sock):
         return [msg]
 
 def recv_all(sock, n):
-    """מקבל בדיוק n בתים"""
+    """
+    מקבל בדיוק n בתים
+    מוודא שהכל נקלט
+
+    מחזיר את ההודעה כפורמט: CMD@ARGS (bytes)
+    """
     data = b''
     while len(data) < n:
         packet = sock.recv(n - len(data))
