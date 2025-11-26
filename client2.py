@@ -2,14 +2,17 @@
 Client.py - Remote Control
 Author: Gilad Elran
 Date: 11/11/2025
+Description:
+This module implements a TCP client that connects to the remote
+control server and sends commands using the custom protocol:
 
-Commands:
+Supported Commands:
 - dir <path>: List files
 - delete <file>: Delete file
 - copy <src> <dst>: Copy file
 - execute <program>: Run program
-- screenshot_take: Take screenshot
-- photo_send: Download screenshot
+- take_screenshot: Take screenshot
+- send_photo: Download screenshot
 - exit: Disconnect
 """
 
