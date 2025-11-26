@@ -95,11 +95,11 @@ def main():
     # חיבור לשרת
     try:
         client_socket.connect((HOST, PORT))
-        print(f"✓ Connected to server at {HOST}:{PORT}")
+        print(f"Connected to server at {HOST}:{PORT}")
         print(f"Type 'exit' to disconnect\n")
         logging.info(f"Connected to server at {HOST}:{PORT}")
     except Exception as e:
-        print(f"❌ Connection failed: {e}")
+        print(f"Connection failed: {e}")
         logging.error(f"Connection failed: {e}")
         return
 
@@ -110,7 +110,7 @@ def main():
         if not cmd:
             continue
 
-        # ✅ VALIDATION
+        # VALIDATION
         valid, error = validate_command(cmd)
         if not valid:
             print(f"❌ {error}")
@@ -139,10 +139,10 @@ def main():
 
             # הדפסת תוצאה
             if success:
-                print(f"✓ {command} succeeded")
+                print(f"{command} succeeded")
                 logging.info(f"{command} succeeded")
             else:
-                print(f"✗ {command} failed")
+                print(f"{command} failed")
                 logging.warning(f"{command} failed")
 
             # טיפול בפקודות מיוחדות
@@ -151,7 +151,7 @@ def main():
             if success and command == "DIR":
                 files = protocol.recv(client_socket)
                 if files and files[0]:
-                    print("\n📁 Files:")
+                    print("\nFiles:")
                     print(files[0])
                     print()
                     logging.info(f"Received {len(files[0].split())} files")
@@ -166,26 +166,26 @@ def main():
                     try:
                         with open("received_screen.jpg", "wb") as f:
                             f.write(img_data)
-                        print(f"✓ Screenshot saved ({len(img_data):,} bytes)")
+                        print(f"Screenshot saved ({len(img_data):,} bytes)")
                         logging.info(f"Screenshot saved: {len(img_data)} bytes")
                     except Exception as e:
-                        print(f"❌ Failed to save screenshot: {e}")
+                        print(f"Failed to save screenshot: {e}")
                         logging.error(f"Failed to save screenshot: {e}")
 
             # EXIT - ניתוק
             if command == "EXIT":
-                print("👋 Disconnecting...")
+                print("Disconnecting...")
                 logging.info("User disconnected")
                 break
 
         except Exception as e:
-            print(f"❌ Receive error: {e}")
+            print(f"Receive error: {e}")
             logging.error(f"Receive error: {e}")
             break
 
     # סגירה
     client_socket.close()
-    print("✓ Disconnected")
+    print("Disconnected")
     logging.info("Connection closed")
 
 
