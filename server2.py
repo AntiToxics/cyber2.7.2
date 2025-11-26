@@ -255,13 +255,13 @@ def main():
             try:
                 print("Waiting for client...")
                 client, addr = server_socket.accept()
-                print(f"✓ Client connected: {addr}")
+                print(f"Client connected: {addr}")
                 logging.info(f"Client connected: {addr}")
 
                 handle_client(client, addr)
 
             except KeyboardInterrupt:
-                print("\n\n🛑 Shutting down server...")
+                print("\n\n Shutting down server...")
                 break
             except Exception as e:
                 logging.error(f"Accept error: {e}")
