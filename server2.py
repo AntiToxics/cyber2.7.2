@@ -1,7 +1,10 @@
 """
-TCP Server - Remote Control
+Server.py - TCP server
 Author: Gilad Elran
 Date: 11/11/2025
+Description:
+This module implements a TCP server that listens for connections
+from clients and executes remote commands.
 
 Supported Commands:
 - DIR <path>: List files in directory
