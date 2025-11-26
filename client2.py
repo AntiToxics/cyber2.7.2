@@ -37,8 +37,8 @@ VALID_COMMANDS = {
     "DELETE": 1,  # Requires 1 argument (file)
     "COPY": 2,  # Requires 2 arguments (src, dst)
     "EXECUTE": 1,  # Requires 1 argument (program)
-    "SCREENSHOT_TAKE": 0,  # No arguments
-    "PHOTO_SEND": 0,  # No arguments
+    "TAKE_SCREENSHOT": 0,  # No arguments
+    "SEND_PHOTO": 0,  # No arguments
     "EXIT": 0  # No arguments
 }
 
@@ -116,7 +116,7 @@ def main():
         # VALIDATION
         valid, error = validate_command(cmd)
         if not valid:
-            print(f"❌ {error}")
+            print(f"{error}")
             logging.warning(f"Invalid command: {cmd} - {error}")
             continue
 
@@ -125,7 +125,7 @@ def main():
             protocol.send(client_socket, cmd)
             logging.info(f"Sent command: {cmd}")
         except Exception as e:
-            print(f"❌ Send error: {e}")
+            print(f"Send error: {e}")
             logging.error(f"Send error: {e}")
             break
 
@@ -133,7 +133,7 @@ def main():
         try:
             result = protocol.recv(client_socket)
             if result is None:
-                print("❌ Server closed connection")
+                print("Server closed connection")
                 logging.warning("Server closed connection")
                 break
 
@@ -159,8 +159,8 @@ def main():
                     print()
                     logging.info(f"Received {len(files[0].split())} files")
 
-            # PHOTO_SEND - שמירת תמונה
-            if success and command == "PHOTO_SEND":
+            # SEND_PHOTO - שמירת תמונה
+            if success and command == "SEND_PHOTO":
                 img_result = protocol.recv(client_socket)
                 if img_result and img_result[0]:
                     img_data = img_result[0]
