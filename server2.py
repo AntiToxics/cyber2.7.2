@@ -68,7 +68,7 @@ def look_for_dir(location):
         return False, []
 
 
-def delete(file_path):
+def delete_file(file_path):
     """
     מוחק קובץ
 
@@ -87,7 +87,7 @@ def delete(file_path):
         return False
 
 
-def copy(src, dst):
+def copy_file(src, dst):
     """
     מעתיק קובץ
 
@@ -107,7 +107,7 @@ def copy(src, dst):
         return False
 
 
-def execute(program):
+def execute_program(program):
     """
     מריץ תוכנית
 
@@ -194,15 +194,15 @@ def handle_client(client, addr):
                     protocol.send(client, file_list)
 
             elif cmd == "DELETE" and args:
-                success = delete(args[0])
+                success = delete_file(args[0])
                 protocol.send(client, str(success))
 
             elif cmd == "COPY" and len(args) >= 2:
-                success = copy(args[0], args[1])
+                success = copy_file(args[0], args[1])
                 protocol.send(client, str(success))
 
             elif cmd == "EXECUTE" and args:
-                success = execute(args[0])
+                success = execute_program(args[0])
                 protocol.send(client, str(success))
 
             elif cmd == "TAKE_SCREENSHOT":
@@ -245,7 +245,7 @@ def main():
     """
     # יצירת socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # פתר לי את בעית OSError: [Errno 98] Address already in use
 
     try:
         server_socket.bind((HOST, PORT))
@@ -296,15 +296,15 @@ if __name__ == "__main__":
 
     # Copy assertation
     # ---------------------
-    assert copy("test_src2.txt", "test_dst2.txt") is True, "Assertation FAILED"
+    assert copy_file("test_src2.txt", "test_dst2.txt") is True, "Assertation FAILED"
     # ---------------------
 
 
     # Delete assertation
     #-------------------
-    assert delete("test_dst2.txt") is True, "Assertation FAILED"
-    assert delete("test_src2.txt") is True, "Assertation FAILED"
-    assert delete("test_src.txt") is True, "Assertation FAILED"
+    assert delete_file("test_dst2.txt") is True, "Assertation FAILED"
+    assert delete_file("test_src2.txt") is True, "Assertation FAILED"
+    assert delete_file("test_src.txt") is True, "Assertation FAILED"
     # -------------------
 
     #Take_screenshot assertation
