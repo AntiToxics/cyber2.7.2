@@ -1,9 +1,15 @@
 """
-Protocol module for client-server communication
-פורמט: LENGTH#CMD@ARGS
+Protocol.py
+Author: Gilad Elran
+Date: 11/11/2025
+Description:
+This module defines a simple custom protocol for sending and receiving
+messages over a TCP connection. Each message follows the format:
+
+    length#cmd@args
 """
 
-import socket
+
 
 def send(sock, msg):
     """
