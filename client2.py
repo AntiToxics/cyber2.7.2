@@ -103,6 +103,16 @@ def main():
         print(f"Connected to server at {HOST}:{PORT}")
         print(f"Type 'exit' to disconnect\n")
         logging.info(f"Connected to server at {HOST}:{PORT}")
+        print("\n" + "=" * 50)
+        print("""
+        - dir <path>: List files
+        - delete <file>: Delete file
+        - copy <src> <dst>: Copy file
+        - execute <program>: Run program
+        - take_screenshot: Take screenshot
+        - send_photo: Download screenshot
+        - exit: Disconnect""")
+        print("=" * 50)
     except Exception as e:
         print(f"Connection failed: {e}")
         logging.error(f"Connection failed: {e}")
