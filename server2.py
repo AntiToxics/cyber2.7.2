@@ -59,10 +59,10 @@ def look_for_dir(location):
 
         all_items = glob.glob(location)
         # סינון - רק קבצים
-        files = [f for f in all_items if os.path.isfile(f)]
+        dir_files = [file for file in all_items if os.path.isfile(file)]
 
-        logging.info(f"DIR: {location} → {len(files)} files")
-        return True, files
+        logging.info(f"DIR: {location} → {len(dir_files)} files")
+        return True, dir_files
     except Exception as e:
         logging.error(f"DIR failed: {e}")
         return False, []
@@ -151,8 +151,8 @@ def send_screenshot():
         (False, None): כשלון
     """
     try:
-        with open("screen.jpg", "rb") as f:
-            data = f.read()
+        with open("screen.jpg", "rb") as file:
+            data = file.read()
         logging.info(f"Screenshot ready: {len(data)} bytes")
         return True, data
     except Exception as e:
@@ -187,32 +187,32 @@ def handle_client(client, addr):
 
             # ביצוע פקודות
             if cmd == "DIR" and args:
-                success, files = look_for_dir(args[0])
-                protocol.send(client, str(success))
-                if success:
-                    file_list = '\n'.join(files) if files else "No files"
+                cmd_success, recived_files = look_for_dir(args[0])
+                protocol.send(client, str(cmd_success))
+                if cmd_success:
+                    file_list = '\n'.join(recived_files) if recived_files else "No files"
                     protocol.send(client, file_list)
 
             elif cmd == "DELETE" and args:
-                success = delete_file(args[0])
-                protocol.send(client, str(success))
+                cmd_success = delete_file(args[0])
+                protocol.send(client, str(cmd_success))
 
             elif cmd == "COPY" and len(args) >= 2:
-                success = copy_file(args[0], args[1])
-                protocol.send(client, str(success))
+                cmd_success = copy_file(args[0], args[1])
+                protocol.send(client, str(cmd_success))
 
             elif cmd == "EXECUTE" and args:
-                success = execute_program(args[0])
-                protocol.send(client, str(success))
+                cmd_success = execute_program(args[0])
+                protocol.send(client, str(cmd_success))
 
             elif cmd == "TAKE_SCREENSHOT":
-                success = take_screenshot()
-                protocol.send(client, str(success))
+                cmd_success = take_screenshot()
+                protocol.send(client, str(cmd_success))
 
             elif cmd == "SEND_PHOTO":
-                success, data = send_screenshot()
-                protocol.send(client, str(success))
-                if success and data:
+                cmd_success, data = send_screenshot()
+                protocol.send(client, str(cmd_success))
+                if cmd_success and data:
                     protocol.send(client, data)
 
             elif cmd == "EXIT":
