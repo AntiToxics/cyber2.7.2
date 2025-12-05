@@ -29,12 +29,7 @@ import protocol
 HOST = '0.0.0.0'
 PORT = 1729
 
-# Logging setup
-logging.basicConfig(
-    filename='server.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+
 
 
 # ==========================================
@@ -228,9 +223,11 @@ def handle_client(client, addr):
             logging.error(f"Handler error: {e}")
             try:
                 protocol.send(client, "False")
-            except:
+            except Exception as error:
+                logging.error(f"error: {error}")
                 break
 
+    #no need for finally because of the breaks
     client.close()
     print(f"Client {addr} disconnected")
 
@@ -277,7 +274,12 @@ def main():
 
 
 if __name__ == "__main__":
-
+    # Logging setup
+    logging.basicConfig(
+        filename='server.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
 
     # Demi-files for asserts
     #---------------------
