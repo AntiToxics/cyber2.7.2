@@ -15,21 +15,15 @@ Supported Commands:
 - send_photo: Download screenshot
 - exit: Disconnect
 """
-
 import socket
 import logging
 import protocol
+
 
 # Configuration
 HOST = '127.0.0.1'
 PORT = 1729
 
-# Logging setup
-logging.basicConfig(
-    filename='client.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 
 # Valid Commands and Arguments
 VALID_COMMANDS = {
@@ -80,6 +74,7 @@ def validate_command(cmd_input):
 
     if actual > expected and expected == 0:
         return False, f"{cmd} doesn't take arguments"
+
     if actual > expected and expected >0:
         return False, f"{cmd} requires {expected} argument(s), got {actual}"
     return True, ""
@@ -104,14 +99,13 @@ def main():
         print(f"Type 'exit' to disconnect\n")
         logging.info(f"Connected to server at {HOST}:{PORT}")
         print("\n" + "=" * 50)
-        print("""
-        - dir <path>: List files
-        - delete <file>: Delete file
-        - copy <src> <dst>: Copy file
-        - execute <program>: Run program
-        - take_screenshot: Take screenshot
-        - send_photo: Download screenshot
-        - exit: Disconnect""")
+        print("- dir <path>: List files\n"
+              "- delete <file>: Delete file\n"
+              "- copy <src> <dst>: Copy file\n"
+              "- execute <program>: Run program\n"
+              "- take_screenshot: Take screenshot\n"
+              "- send_photo: Download screenshot\n"
+              "- exit: Disconnect")
         print("=" * 50)
 
 
@@ -130,75 +124,64 @@ def main():
                 continue
 
             # שליחת פקודה
-            try:
-                protocol.send(client_socket, cmd)
-                logging.info(f"Sent command: {cmd}")
-            except Exception as e:
-                print(f"Send error: {e}")
-                logging.error(f"Send error: {e}")
-                break
+
+            protocol.send(client_socket, cmd)
+            logging.info(f"Sent command: {cmd}")
+
 
             # קבלת תשובה
-            try:
-                result = protocol.recv(client_socket)
-                if result is None:
-                    print("Server closed connection")
-                    logging.warning("Server closed connection")
-                    break
+            result = protocol.recv(client_socket)
+            if result is None:
+                print("Server closed connection")
+                logging.warning("Server closed connection")
+                break
 
-                success = result[0] == "True"
-                command = cmd.split()[0].upper()
+            success = result[0] == "True"
+            command = cmd.split()[0].upper()
 
-                # הדפסת תוצאה
-                if success:
-                    print(f"{command} succeeded")
-                    logging.info(f"{command} succeeded")
-                else:
-                    print(f"{command} failed")
-                    logging.warning(f"{command} failed")
+            # הדפסת תוצאה
+            if success:
+                print(f"{command} succeeded")
+                logging.info(f"{command} succeeded")
+            else:
+                print(f"{command} failed")
+                logging.warning(f"{command} failed")
 
-                # טיפול בפקודות מיוחדות
+            # טיפול בפקודות מיוחדות
 
-                # DIR - הצגת קבצים
-                if success and command == "DIR":
-                    files = protocol.recv(client_socket)
-                    if files and files[0]:
-                        print("\nFiles:")
-                        print(files[0])
-                        print()
-                        logging.info(f"Received {len(files[0].split())} files")
+            # DIR - הצגת קבצים
+            if success and command == "DIR":
+                files = protocol.recv(client_socket)
+                if files and files[0]:
+                    print("\nFiles:")
+                    print(files[0])
+                    print()
+                    logging.info(f"Received {len(files[0].split())} files")
 
-                # SEND_PHOTO - שמירת תמונה
-                if success and command == "SEND_PHOTO":
-                    img_result = protocol.recv(client_socket)
-                    if img_result and img_result[0]:
-                        img_data = img_result[0]
+            # SEND_PHOTO - שמירת תמונה
+            if success and command == "SEND_PHOTO":
+                img_result = protocol.recv(client_socket)
+                if img_result and img_result[0]:
+                    img_data = img_result[0]
 
-                        # שמירה לקובץ
-                        try:
-                            with open("received_screen.jpg", "wb") as f:
-                                f.write(img_data)
-                            print(f"Screenshot saved ({len(img_data):,} bytes)")
-                            logging.info(f"Screenshot saved: {len(img_data)} bytes")
-                        except Exception as e:
-                            print(f"Failed to save screenshot: {e}")
-                            logging.error(f"Failed to save screenshot: {e}")
+                    # שמירה לקובץ
 
-                # EXIT - ניתוק
-                if command == "EXIT":
-                    print("Disconnecting...")
-                    logging.info("User disconnected")
-                    break
+                    with open("received_screen.jpg", "wb") as f:
+                        f.write(img_data)
+                        print(f"Screenshot saved ({len(img_data):,} bytes)")
+                        logging.info(f"Screenshot saved: {len(img_data)} bytes")
 
-            except Exception as e:
-                print(f"Receive error: {e}")
-                logging.error(f"Receive error: {e}")
+
+            # EXIT - ניתוק
+            if command == "EXIT":
+                print("Disconnecting...")
+                logging.info("User disconnected")
                 break
 
 
-    except Exception as e:
-        print(f"Connection failed: {e}")
-        logging.error(f"Connection failed: {e}")
+    except Exception as error:
+        print(f"Connection failed: {error}")
+        logging.error(f"Connection failed: {error}")
         return
 
 
@@ -209,10 +192,23 @@ def main():
 
 
 if __name__ == "__main__":
-    assert validate_command("DIR c:/")[0] is True, "Assertation FAILED"
-    assert validate_command("DELETE file.txt")[0] is True, "Assertation FAILED"
-    assert validate_command("COPY a b")[0] is True, "Assertation FAILED"
-    assert validate_command("EXECUTE notepad")[0] is True, "Assertation FAILED"
-    assert validate_command("EXIT")[0] is True, "Assertation FAILED"
-    logging.info("All assert tests passed")
+
+    # Logging setup
+    logging.basicConfig(
+        filename='client.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+
+    try:
+        assert validate_command("DIR c:/")[0] is True, "Assertation FAILED"
+        assert validate_command("DELETE file.txt")[0] is True, "Assertation FAILED"
+        assert validate_command("COPY a b")[0] is True, "Assertation FAILED"
+        assert validate_command("EXECUTE notepad")[0] is True, "Assertation FAILED"
+        assert validate_command("EXIT")[0] is True, "Assertation FAILED"
+        logging.info("All assert tests passed")
+
+    except Exception as e:
+        logging.error(f"Assertion failed: {e}")
+
     main()
